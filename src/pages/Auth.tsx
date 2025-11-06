@@ -1,46 +1,92 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Linkedin } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { user, signInWithGoogle, signInWithLinkedIn, signInWithEmail, signUpWithEmail } = useAuth();
   const { toast } = useToast();
 
-  const handleGoogleSignIn = () => {
-    setIsLoading(true);
-    // Simulate Google OAuth flow
-    setTimeout(() => {
-      login("demo@byupathway.edu");
-      toast({
-        title: "Welcome back!",
-        description: "Successfully signed in with Google",
-      });
+  useEffect(() => {
+    if (user) {
       navigate("/dashboard");
-    }, 1000);
+    }
+  }, [user, navigate]);
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setIsLoading(true);
+      await signInWithGoogle();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to sign in with Google",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+    }
   };
 
-  const handleEmailSignIn = (e: React.FormEvent) => {
+  const handleLinkedInSignIn = async () => {
+    try {
+      setIsLoading(true);
+      await signInWithLinkedIn();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to sign in with LinkedIn",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+    }
+  };
+
+  const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || !password) return;
     
     setIsLoading(true);
-    setTimeout(() => {
-      login(email);
+    try {
+      const { error } = isSignUp 
+        ? await signUpWithEmail(email, password)
+        : await signInWithEmail(email, password);
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message || `Failed to ${isSignUp ? 'sign up' : 'sign in'}`,
+          variant: "destructive",
+        });
+      } else if (isSignUp) {
+        toast({
+          title: "Success!",
+          description: "Check your email to verify your account",
+        });
+      } else {
+        toast({
+          title: "Welcome back!",
+          description: "Successfully signed in",
+        });
+      }
+    } catch (error: any) {
       toast({
-        title: "Welcome!",
-        description: "Successfully signed in",
+        title: "Error",
+        description: error.message || "An unexpected error occurred",
+        variant: "destructive",
       });
-      navigate("/dashboard");
-    }, 1000);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -53,8 +99,10 @@ const Auth = () => {
               <span className="text-2xl font-bold">JobApply AI</span>
             </div>
           </div>
-          <CardTitle>Welcome Back</CardTitle>
-          <CardDescription>Sign in to continue your job search</CardDescription>
+          <CardTitle>{isSignUp ? 'Create Account' : 'Welcome Back'}</CardTitle>
+          <CardDescription>
+            {isSignUp ? 'Sign up to start your job search' : 'Sign in to continue your job search'}
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <Button 
@@ -84,6 +132,16 @@ const Auth = () => {
             Continue with Google
           </Button>
 
+          <Button 
+            variant="outline" 
+            className="w-full" 
+            onClick={handleLinkedInSignIn}
+            disabled={isLoading}
+          >
+            <Linkedin className="mr-2 h-4 w-4" />
+            Continue with LinkedIn
+          </Button>
+
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t" />
@@ -93,7 +151,7 @@ const Auth = () => {
             </div>
           </div>
 
-          <form onSubmit={handleEmailSignIn} className="space-y-4">
+          <form onSubmit={handleEmailAuth} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -105,16 +163,32 @@ const Auth = () => {
                 required
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+              />
+            </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Signing in..." : "Sign In"}
+              {isLoading ? (isSignUp ? "Creating account..." : "Signing in...") : (isSignUp ? "Sign Up" : "Sign In")}
             </Button>
           </form>
 
           <p className="text-center text-sm text-muted-foreground">
-            Don't have an account?{" "}
-            <Link to="/auth" className="text-primary hover:underline">
-              Sign up for free
-            </Link>
+            {isSignUp ? "Already have an account? " : "Don't have an account? "}
+            <button 
+              type="button"
+              onClick={() => setIsSignUp(!isSignUp)}
+              className="text-primary hover:underline"
+            >
+              {isSignUp ? "Sign in" : "Sign up for free"}
+            </button>
           </p>
         </CardContent>
       </Card>

@@ -25,8 +25,8 @@ const Applications = () => {
     return null;
   }
 
-  const freeApplicationsLeft = Math.max(0, 5 - user.applicationsUsed);
-  const canApply = user.isSubscribed || freeApplicationsLeft > 0;
+  const freeApplicationsLeft = Math.max(0, 5 - user.applications_used);
+  const canApply = user.is_subscribed || freeApplicationsLeft > 0;
 
   const handleAnalyzeAndApply = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,10 +102,10 @@ const Applications = () => {
               <div>
                 <p className="text-sm font-medium">Applications Remaining</p>
                 <p className="text-2xl font-bold text-primary">
-                  {user.isSubscribed ? "Unlimited" : freeApplicationsLeft}
+                  {user.is_subscribed ? "Unlimited" : freeApplicationsLeft}
                 </p>
               </div>
-              {!user.isSubscribed && (
+              {!user.is_subscribed && (
                 <Link to="/subscription">
                   <Button>Upgrade Now</Button>
                 </Link>

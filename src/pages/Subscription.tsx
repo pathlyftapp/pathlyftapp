@@ -109,9 +109,9 @@ const Subscription = () => {
                 <Button 
                   className="w-full" 
                   onClick={() => handleSubscribe(tier.region)}
-                  disabled={user.isSubscribed}
+                  disabled={user.is_subscribed}
                 >
-                  {user.isSubscribed ? "Current Plan" : "Subscribe"}
+                  {user.is_subscribed ? "Current Plan" : "Subscribe"}
                 </Button>
               </CardContent>
             </Card>

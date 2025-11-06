@@ -103,19 +103,19 @@ const Profile = () => {
           <CardHeader>
             <CardTitle>Account Type</CardTitle>
             <CardDescription>
-              {user.isSubscribed ? "Premium Account" : "Free Account"}
+              {user.is_subscribed ? "Premium Account" : "Free Account"}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">
-                  {user.isSubscribed 
+                  {user.is_subscribed 
                     ? "You have unlimited AI job applications"
                     : "Upgrade to get unlimited applications"}
                 </p>
               </div>
-              {!user.isSubscribed && (
+              {!user.is_subscribed && (
                 <Link to="/subscription">
                   <Button>Upgrade</Button>
                 </Link>

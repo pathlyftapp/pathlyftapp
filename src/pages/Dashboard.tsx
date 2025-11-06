@@ -71,8 +71,8 @@ const Dashboard = () => {
     return null;
   }
 
-  const freeApplicationsLeft = Math.max(0, 5 - user.applicationsUsed);
-  const canApply = user.isSubscribed || freeApplicationsLeft > 0;
+  const freeApplicationsLeft = Math.max(0, 5 - user.applications_used);
+  const canApply = user.is_subscribed || freeApplicationsLeft > 0;
 
   const handleLogout = () => {
     logout();
@@ -174,11 +174,11 @@ const Dashboard = () => {
             <CardHeader>
               <CardTitle>Free Applications</CardTitle>
               <CardDescription>
-                {user.isSubscribed ? "Unlimited" : `${freeApplicationsLeft} of 5 remaining`}
+                {user.is_subscribed ? "Unlimited" : `${freeApplicationsLeft} of 5 remaining`}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {!user.isSubscribed && (
+              {!user.is_subscribed && (
                 <>
                   <Progress value={(freeApplicationsLeft / 5) * 100} className="mb-4" />
                   <Link to="/subscription">
@@ -188,7 +188,7 @@ const Dashboard = () => {
                   </Link>
                 </>
               )}
-              {user.isSubscribed && (
+              {user.is_subscribed && (
                 <Badge className="w-full justify-center py-2">Premium Member</Badge>
               )}
             </CardContent>
@@ -199,11 +199,11 @@ const Dashboard = () => {
             <CardHeader>
               <CardTitle>LinkedIn Profile</CardTitle>
               <CardDescription>
-                {user.linkedinConnected ? "Connected" : "Not connected"}
+                {user.linkedin_connected ? "Connected" : "Not connected"}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {!user.linkedinConnected ? (
+              {!user.linkedin_connected ? (
                 <Button 
                   onClick={handleConnectLinkedIn} 
                   variant="outline" 
