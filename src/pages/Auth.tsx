@@ -96,7 +96,7 @@ const Auth = () => {
           <div className="flex justify-center mb-4">
             <div className="flex items-center gap-2">
               <Sparkles className="h-8 w-8 text-primary" />
-              <span className="text-2xl font-bold">JobApply AI</span>
+              <span className="text-2xl font-bold">Pathlyft</span>
             </div>
           </div>
           <CardTitle>{isSignUp ? 'Create Account' : 'Welcome Back'}</CardTitle>

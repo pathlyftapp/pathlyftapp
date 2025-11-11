@@ -12,7 +12,7 @@ const Landing = () => {
         <div className="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <Sparkles className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold">JobApply AI</span>
+            <span className="text-xl font-bold">Pathlyft</span>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
             <Link to="/about" className="hidden sm:inline">
@@ -176,7 +176,7 @@ const Landing = () => {
           <Users className="h-12 w-12 text-primary mx-auto mb-4" />
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">Ready to Transform Your Job Search?</h2>
           <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-            Join thousands of BYU Pathway students who have found their dream jobs with JobApply AI
+            Join thousands of BYU Pathway students who have found their dream jobs with Pathlyft
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/auth">

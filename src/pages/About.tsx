@@ -13,7 +13,7 @@ const About = () => {
           <Link to="/">
             <div className="flex items-center gap-2">
               <Sparkles className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold">JobApply AI</span>
+              <span className="text-xl font-bold">Pathlyft</span>
             </div>
           </Link>
           <div className="flex items-center gap-4">
@@ -28,7 +28,7 @@ const About = () => {
       <div className="container mx-auto px-4 py-12">
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold mb-4">About JobApply AI</h1>
+          <h1 className="text-4xl font-bold mb-4">About Pathlyft</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Empowering BYU Pathway students to land their dream jobs through AI-powered automation
           </p>
@@ -79,19 +79,20 @@ const About = () => {
             <h2 className="text-2xl font-bold mb-4">Our Story</h2>
             <div className="space-y-4 text-muted-foreground">
               <p>
-                JobApply AI was born from a simple observation: talented BYU Pathway students were being overlooked 
+                Pathlyft was born from a simple observation: talented BYU Pathway students were being overlooked 
                 because they didn't have time to tailor their resumes for every job application. Many were juggling 
                 work, studies, and family responsibilities, making it nearly impossible to compete with applicants 
                 who could dedicate hours to each application.
               </p>
               <p>
-                We knew technology could help. By leveraging cutting-edge AI and automation, we created a platform 
-                that does the heavy lifting - analyzing job descriptions, tailoring resumes, and submitting applications 
-                across multiple platforms - all while students focus on what matters most: preparing for interviews 
+                We built an AI-powered platform that does the heavy lifting—searching for relevant opportunities, 
+                tailoring applications to match job requirements, and submitting them automatically across multiple 
+                platforms like LinkedIn, Upwork, Fiverr, and Indeed. This gives BYU Pathway students the competitive 
+                edge they deserve, allowing them to focus on developing their skills, completing their education, 
                 and advancing their careers.
               </p>
               <p>
-                Today, JobApply AI serves students across the globe, helping them land interviews at top companies 
+                Today, Pathlyft serves students across the globe, helping them land interviews at top companies 
                 and achieve their career goals. We're proud to be part of their success stories.
               </p>
             </div>
