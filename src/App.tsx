@@ -9,6 +9,7 @@ import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Applications from "./pages/Applications";
+import ActivityFeed from "./pages/ActivityFeed";
 import Profile from "./pages/Profile";
 import Subscription from "./pages/Subscription";
 import About from "./pages/About";
@@ -29,6 +30,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/applications" element={<Applications />} />
+              <Route path="/activity" element={<ActivityFeed />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/subscription" element={<Subscription />} />
               <Route path="/about" element={<About />} />

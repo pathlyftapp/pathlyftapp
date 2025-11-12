@@ -16,9 +16,11 @@ import {
   XCircle,
   Search,
   Settings,
-  Lightbulb
+  Lightbulb,
+  Bell
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import ProgressTracker from "@/components/ProgressTracker";
 
 const mockApplications = [
   {
@@ -140,6 +142,11 @@ const Dashboard = () => {
             <span className="text-xl font-bold">Pathlyft</span>
           </div>
           <div className="flex items-center gap-2">
+            <Link to="/activity">
+              <Button variant="ghost" size="icon">
+                <Bell className="h-5 w-5" />
+              </Button>
+            </Link>
             <Link to="/profile">
               <Button variant="ghost" size="icon">
                 <Settings className="h-5 w-5" />
@@ -167,6 +174,16 @@ const Dashboard = () => {
             <p className="text-sm font-medium">{motivation}</p>
           </CardContent>
         </Card>
+
+        {/* Progress Tracker */}
+        <div className="mb-8">
+          <ProgressTracker 
+            applicationsSubmitted={user.applications_used}
+            interviewsScheduled={mockApplications.filter(a => a.status === "interviewed").length}
+            offersReceived={0}
+            profileCompletion={user.linkedin_connected ? 100 : 60}
+          />
+        </div>
 
         <div className="grid lg:grid-cols-3 gap-6 mb-8">
           {/* Applications Left Card */}
