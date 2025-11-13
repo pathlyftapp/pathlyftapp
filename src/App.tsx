@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/hooks/useAuth";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -28,70 +28,87 @@ import { Button } from "@/components/ui/button";
 
 const queryClient = new QueryClient();
 
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return null;
+  }
+  
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+  
+  return <>{children}</>;
+}
+
 function AppLayout() {
-  const { user, logout } = useAuth();
+  const { user, loading, logout } = useAuth();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
-    window.location.href = "/";
   };
 
-  // Routes that shouldn't have sidebar
+  // Public routes that don't need authentication
   const publicRoutes = ["/", "/auth", "/about"];
-  const isPublicRoute = publicRoutes.includes(window.location.pathname);
+  const isPublicRoute = publicRoutes.includes(location.pathname);
 
-  if (isPublicRoute || !user) {
+  // Show public routes without sidebar
+  if (isPublicRoute) {
     return (
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/about" element={<About />} />
-        <Route path="*" element={<NotFound />} />
       </Routes>
     );
   }
 
+  // Show protected routes with sidebar for authenticated users
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <AppSidebar />
-        <div className="flex-1 flex flex-col">
-          {/* Header */}
-          <header className="sticky top-0 z-10 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="flex h-14 items-center gap-4 px-4">
-              <SidebarTrigger className="hover:bg-accent rounded-md" />
-              <div className="flex items-center gap-2 flex-1">
-                <Sparkles className="h-5 w-5 text-primary" />
-                <span className="font-bold text-lg">Pathlyft</span>
+    <ProtectedRoute>
+      <SidebarProvider>
+        <div className="min-h-screen flex w-full">
+          <AppSidebar />
+          <div className="flex-1 flex flex-col">
+            {/* Header */}
+            <header className="sticky top-0 z-10 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+              <div className="flex h-14 items-center gap-4 px-4">
+                <SidebarTrigger className="hover:bg-accent rounded-md" />
+                <div className="flex items-center gap-2 flex-1">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  <span className="font-bold text-lg">Pathlyft</span>
+                </div>
+                <ThemeToggle />
+                <Button variant="ghost" size="icon" onClick={handleLogout}>
+                  <LogOut className="h-5 w-5" />
+                </Button>
               </div>
-              <ThemeToggle />
-              <Button variant="ghost" size="icon" onClick={handleLogout}>
-                <LogOut className="h-5 w-5" />
-              </Button>
-            </div>
-          </header>
+            </header>
 
-          {/* Main Content */}
-          <main className="flex-1 overflow-auto">
-            <div className="container mx-auto p-6">
-              <Routes>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/applications" element={<Applications />} />
-                <Route path="/activity" element={<ActivityFeed />} />
-                <Route path="/ai-match" element={<AIJobMatch />} />
-                <Route path="/alerts" element={<JobAlerts />} />
-                <Route path="/resume" element={<ResumeCentre />} />
-                <Route path="/cover-letter" element={<CoverLetter />} />
-                <Route path="/inspiration" element={<InspirationCorner />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/subscription" element={<Subscription />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </div>
-          </main>
+            {/* Main Content */}
+            <main className="flex-1 overflow-auto">
+              <div className="container mx-auto p-6">
+                <Routes>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/applications" element={<Applications />} />
+                  <Route path="/activity" element={<ActivityFeed />} />
+                  <Route path="/ai-match" element={<AIJobMatch />} />
+                  <Route path="/alerts" element={<JobAlerts />} />
+                  <Route path="/resume" element={<ResumeCentre />} />
+                  <Route path="/cover-letter" element={<CoverLetter />} />
+                  <Route path="/inspiration" element={<InspirationCorner />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/subscription" element={<Subscription />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </div>
+            </main>
+          </div>
         </div>
-      </div>
-    </SidebarProvider>
+      </SidebarProvider>
+    </ProtectedRoute>
   );
 }
 
@@ -103,7 +120,9 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <AppLayout />
+            <Routes>
+              <Route path="/*" element={<AppLayout />} />
+            </Routes>
           </BrowserRouter>
         </TooltipProvider>
       </AuthProvider>
