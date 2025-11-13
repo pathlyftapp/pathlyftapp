@@ -44,19 +44,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       (event, session) => {
         setSession(session);
         if (session?.user) {
-          // Defer profile fetch with setTimeout
-          setTimeout(() => {
-            fetchUserProfile(session.user.id);
-          }, 0);
+          fetchUserProfile(session.user.id, session);
         } else {
           setUser(null);
         }
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
-      if (initialSession?.user) {
-        fetchUserProfile(initialSession.user.id);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        fetchUserProfile(session.user.id, session);
       } else {
         setLoading(false);
       }
@@ -65,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, [fetchUserProfile]);
 
-  const fetchUserProfile = useCallback(async (userId: string) => {
+  const fetchUserProfile = async (userId: string, session: Session) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -75,7 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (error) throw error;
 
-      if (data && session?.user) {
+      if (data) {
         setUser({
           id: data.id,
           name: data.name || '',
@@ -92,7 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [session]);
 
   const signInWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
