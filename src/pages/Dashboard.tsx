@@ -61,7 +61,7 @@ const motivationalQuotes = [
 ];
 
 const Dashboard = () => {
-  const { user, logout, connectLinkedIn } = useAuth();
+  const { user, loading, logout, connectLinkedIn } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [motivation] = useState(
@@ -70,6 +70,10 @@ const Dashboard = () => {
 
   if (!loading && !user) {
     navigate("/auth");
+    return null;
+  }
+
+  if (loading || !user) {
     return null;
   }
 

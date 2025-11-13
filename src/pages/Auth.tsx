@@ -31,7 +31,7 @@ const Auth = () => {
       const errorMessage = error instanceof Error ? error.message : "Failed to sign in with Google";
       toast({
         title: "Error",
-        description: error.message || "Failed to sign in with Google",
+        description: errorMessage,
         variant: "destructive",
       });
       setIsLoading(false);
