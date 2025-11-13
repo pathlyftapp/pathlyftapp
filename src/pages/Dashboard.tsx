@@ -68,7 +68,7 @@ const Dashboard = () => {
     motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)]
   );
 
-  if (!loading && !user) {
+  if (!user) {
     navigate("/auth");
     return null;
   }

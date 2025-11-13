@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { supabase } from "@/integrations/supabase/client";
 
@@ -16,16 +16,14 @@ interface User extends Profile {
   supabaseUser: SupabaseUser;
 }
 
-import { AuthError } from '@supabase/supabase-js';
-
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
   signInWithLinkedIn: () => Promise<void>;
-  signInWithEmail: (email: string, password: string) => Promise<{ error: AuthError | null }>;
-  signUpWithEmail: (email: string, password: string) => Promise<{ error: AuthError | null }>;
+  signInWithEmail: (email: string, password: string) => Promise<{ error: any }>;
+  signUpWithEmail: (email: string, password: string) => Promise<{ error: any }>;
   logout: () => Promise<void>;
   connectLinkedIn: () => Promise<void>;
   incrementApplications: () => Promise<void>;
@@ -44,28 +42,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       (event, session) => {
         setSession(session);
         if (session?.user) {
-          // Defer profile fetch with setTimeout
-          setTimeout(() => {
-            fetchUserProfile(session.user.id);
-          }, 0);
+          fetchUserProfile(session.user.id, session);
         } else {
           setUser(null);
         }
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
-      if (initialSession?.user) {
-        fetchUserProfile(initialSession.user.id);
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session?.user) {
+        fetchUserProfile(session.user.id, session);
       } else {
         setLoading(false);
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [fetchUserProfile]);
+  }, []);
 
-  const fetchUserProfile = useCallback(async (userId: string) => {
+  const fetchUserProfile = async (userId: string, session: Session) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -75,7 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (error) throw error;
 
-      if (data && session?.user) {
+      if (data) {
         setUser({
           id: data.id,
           name: data.name || '',
@@ -92,7 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   const signInWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
@@ -123,7 +120,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signUpWithEmail = async (email: string, password: string) => {
-    const redirectUrl = `${window.location.origin}/dashboard`;
+    const redirectUrl = `${window.location.origin}/`;
     const { error } = await supabase.auth.signUp({
       email,
       password,

@@ -27,8 +27,7 @@ const Auth = () => {
     try {
       setIsLoading(true);
       await signInWithGoogle();
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to sign in with Google";
+    } catch (error: any) {
       toast({
         title: "Error",
         description: error.message || "Failed to sign in with Google",
@@ -42,11 +41,10 @@ const Auth = () => {
     try {
       setIsLoading(true);
       await signInWithLinkedIn();
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to sign in with LinkedIn";
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: errorMessage,
+        description: error.message || "Failed to sign in with LinkedIn",
         variant: "destructive",
       });
       setIsLoading(false);
@@ -80,11 +78,10 @@ const Auth = () => {
           description: "Successfully signed in",
         });
       }
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: errorMessage,
+        description: error.message || "An unexpected error occurred",
         variant: "destructive",
       });
     } finally {
@@ -183,7 +180,7 @@ const Auth = () => {
             </Button>
           </form>
 
-          <div className="text-center text-sm text-muted-foreground">
+          <p className="text-center text-sm text-muted-foreground">
             {isSignUp ? "Already have an account? " : "Don't have an account? "}
             <button 
               type="button"
@@ -192,7 +189,7 @@ const Auth = () => {
             >
               {isSignUp ? "Sign in" : "Sign up for free"}
             </button>
-          </div>
+          </p>
         </CardContent>
       </Card>
     </div>
