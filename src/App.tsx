@@ -82,10 +82,10 @@ function AppLayout() {
                 </div>
                 <div className="flex items-center gap-1 sm:gap-2">
                   <ThemeToggle />
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={handleLogout} 
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleLogout}
                     className="h-9 w-9 sm:h-10 sm:w-10 touch-manipulation"
                   >
                     <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -108,7 +108,7 @@ function AppLayout() {
                   <Route path="/inspiration" element={<InspirationCorner />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/subscription" element={<Subscription />} />
-                  <Route path="*" element={<NotFound />} />
+                  <Route path="*" element={<Navigate to="/dashboard" replace />} />
                 </Routes>
               </div>
             </main>
