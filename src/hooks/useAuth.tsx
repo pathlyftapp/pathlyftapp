@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Profile {
   id: string;
@@ -36,46 +37,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check for existing mock session in localStorage
-    const storedUser = localStorage.getItem('mockUser');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const signInWithGoogle = async () => {
-    console.log('Mock Google sign-in - Backend not connected');
+    await supabase.auth.signInWithOAuth({ provider: 'google' });
   };
 
   const signInWithLinkedIn = async () => {
-    console.log('Mock LinkedIn sign-in - Backend not connected');
+    await supabase.auth.signInWithOAuth({ provider: 'linkedin' });
   };
 
   const signInWithEmail = async (email: string, password: string) => {
-    // Mock authentication
-    const mockUser: User = {
-      id: 'mock-user-' + Date.now(),
-      email: email,
-      name: email.split('@')[0],
-      avatar: '',
-      linkedin_connected: false,
-      applications_used: 0,
-      is_subscribed: false,
-    };
-    setUser(mockUser);
-    localStorage.setItem('mockUser', JSON.stringify(mockUser));
-    navigate('/dashboard');
-    return { error: null };
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    return { error };
   };
 
   const signUpWithEmail = async (email: string, password: string) => {
-    // Mock sign up
-    return signInWithEmail(email, password);
+    const { error } = await supabase.auth.signUp({ email, password });
+    return { error };
   };
 
   const logout = async () => {
-    setUser(null);
-    localStorage.removeItem('mockUser');
+    await supabase.auth.signOut();
     navigate('/');
   };
 
