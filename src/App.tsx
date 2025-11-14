@@ -73,16 +73,21 @@ function AppLayout() {
           <AppSidebar />
           <div className="flex-1 flex flex-col min-w-0">
             {/* Header */}
-            <header className="sticky top-0 z-10 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-              <div className="flex h-14 items-center gap-2 sm:gap-4 px-3 sm:px-4">
-                <SidebarTrigger className="hover:bg-accent rounded-md -ml-1 sm:ml-0" />
-                <div className="flex items-center gap-2 flex-1 min-w-0">
-                  <Sparkles className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span className="font-bold text-base sm:text-lg truncate">Pathlyft</span>
+            <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80">
+              <div className="flex h-14 sm:h-16 items-center gap-2 sm:gap-4 px-3 sm:px-6">
+                <SidebarTrigger className="hover:bg-accent/80 transition-colors rounded-md touch-manipulation h-9 w-9 sm:h-10 sm:w-10 flex items-center justify-center" />
+                <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                  <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-primary flex-shrink-0" />
+                  <span className="font-bold text-base sm:text-lg md:text-xl truncate">Pathlyft</span>
                 </div>
                 <div className="flex items-center gap-1 sm:gap-2">
                   <ThemeToggle />
-                  <Button variant="ghost" size="icon" onClick={handleLogout} className="h-9 w-9 sm:h-10 sm:w-10">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={handleLogout} 
+                    className="h-9 w-9 sm:h-10 sm:w-10 touch-manipulation"
+                  >
                     <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
                   </Button>
                 </div>
@@ -90,8 +95,8 @@ function AppLayout() {
             </header>
 
             {/* Main Content */}
-            <main className="flex-1 overflow-auto">
-              <div className="container mx-auto p-3 sm:p-4 md:p-6">
+            <main className="flex-1 overflow-auto bg-background">
+              <div className="container mx-auto p-3 sm:p-4 md:p-6 lg:p-8">
                 <Routes>
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/applications" element={<Applications />} />

@@ -8,6 +8,7 @@ import {
   User,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 import {
   Sidebar,
@@ -60,24 +61,32 @@ const menuItems = [
 ];
 
 export function AppSidebar() {
-  const { open } = useSidebar();
+  const { open, setOpen } = useSidebar();
   const location = useLocation();
   const currentPath = location.pathname;
+  const isMobile = useIsMobile();
 
   const isActive = (path: string) => currentPath === path;
+
+  const handleLinkClick = () => {
+    // Auto-collapse sidebar on mobile after navigation
+    if (isMobile && open) {
+      setOpen(false);
+    }
+  };
 
   return (
     <Sidebar
       collapsible="icon"
-      className="border-r border-border bg-card"
+      className="border-r border-sidebar-border bg-sidebar transition-all duration-300 ease-in-out"
     >
-      <SidebarContent className="pt-2">
+      <SidebarContent className="pt-3 sm:pt-4">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs sm:text-sm font-semibold text-foreground px-3 sm:px-4 py-2 sm:py-3">
+          <SidebarGroupLabel className="text-xs sm:text-sm font-semibold text-sidebar-foreground px-4 py-3 mb-1">
             Navigation
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1 px-2">
               {menuItems.map((item) => {
                 const active = isActive(item.url);
                 return (
@@ -86,11 +95,25 @@ export function AppSidebar() {
                       asChild
                       isActive={active}
                       tooltip={item.title}
-                      className="hover:bg-accent/50 transition-colors min-h-[44px] touch-manipulation"
+                      className="transition-all duration-200 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground min-h-[44px] touch-manipulation rounded-md"
                     >
-                      <Link to={item.url} className="flex items-center gap-2 sm:gap-3 px-2 sm:px-3">
-                        <item.icon className={`h-5 w-5 flex-shrink-0 ${active ? 'text-primary' : 'text-muted-foreground'}`} />
-                        <span className={`text-sm sm:text-base truncate ${active ? 'font-medium text-primary' : 'text-foreground'}`}>
+                      <Link 
+                        to={item.url} 
+                        onClick={handleLinkClick}
+                        className="flex items-center gap-3 px-3 py-2 w-full"
+                      >
+                        <item.icon 
+                          className={`h-5 w-5 sm:h-5 sm:w-5 flex-shrink-0 transition-colors ${
+                            active ? 'text-sidebar-primary' : 'text-sidebar-foreground/70'
+                          }`} 
+                        />
+                        <span 
+                          className={`text-sm sm:text-base truncate transition-colors ${
+                            active 
+                              ? 'font-semibold text-sidebar-primary' 
+                              : 'font-medium text-sidebar-foreground'
+                          }`}
+                        >
                           {item.title}
                         </span>
                       </Link>
