@@ -160,7 +160,7 @@ const Auth = () => {
               <Input
                 id="email"
                 type="email"
-                placeholder="you@byupathway.edu"
+                placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
