@@ -108,4 +108,15 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Mobile touch optimization */
+  @media (max-width: 768px) {
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    button, a, [role="button"] {
+      touch-action: manipulation;
+    }
+  }
 }

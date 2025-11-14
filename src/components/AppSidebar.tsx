@@ -71,9 +71,9 @@ export function AppSidebar() {
       collapsible="icon"
       className="border-r border-border bg-card"
     >
-      <SidebarContent>
+      <SidebarContent className="pt-2">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-sm font-semibold text-foreground px-4 py-3">
+          <SidebarGroupLabel className="text-xs sm:text-sm font-semibold text-foreground px-3 sm:px-4 py-2 sm:py-3">
             Navigation
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -86,11 +86,11 @@ export function AppSidebar() {
                       asChild
                       isActive={active}
                       tooltip={item.title}
-                      className="hover:bg-accent/50 transition-colors"
+                      className="hover:bg-accent/50 transition-colors min-h-[44px] touch-manipulation"
                     >
-                      <Link to={item.url} className="flex items-center gap-3">
-                        <item.icon className={`h-5 w-5 ${active ? 'text-primary' : 'text-muted-foreground'}`} />
-                        <span className={active ? 'font-medium text-primary' : 'text-foreground'}>
+                      <Link to={item.url} className="flex items-center gap-2 sm:gap-3 px-2 sm:px-3">
+                        <item.icon className={`h-5 w-5 flex-shrink-0 ${active ? 'text-primary' : 'text-muted-foreground'}`} />
+                        <span className={`text-sm sm:text-base truncate ${active ? 'font-medium text-primary' : 'text-foreground'}`}>
                           {item.title}
                         </span>
                       </Link>
