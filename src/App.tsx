@@ -68,28 +68,30 @@ function AppLayout() {
   // Show protected routes with sidebar for authenticated users
   return (
     <ProtectedRoute>
-      <SidebarProvider>
+      <SidebarProvider defaultOpen={false}>
         <div className="min-h-screen flex w-full">
           <AppSidebar />
-          <div className="flex-1 flex flex-col">
+          <div className="flex-1 flex flex-col min-w-0">
             {/* Header */}
             <header className="sticky top-0 z-10 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-              <div className="flex h-14 items-center gap-4 px-4">
-                <SidebarTrigger className="hover:bg-accent rounded-md" />
-                <div className="flex items-center gap-2 flex-1">
-                  <Sparkles className="h-5 w-5 text-primary" />
-                  <span className="font-bold text-lg">Pathlyft</span>
+              <div className="flex h-14 items-center gap-2 sm:gap-4 px-3 sm:px-4">
+                <SidebarTrigger className="hover:bg-accent rounded-md -ml-1 sm:ml-0" />
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                  <Sparkles className="h-5 w-5 text-primary flex-shrink-0" />
+                  <span className="font-bold text-base sm:text-lg truncate">Pathlyft</span>
                 </div>
-                <ThemeToggle />
-                <Button variant="ghost" size="icon" onClick={handleLogout}>
-                  <LogOut className="h-5 w-5" />
-                </Button>
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <ThemeToggle />
+                  <Button variant="ghost" size="icon" onClick={handleLogout} className="h-9 w-9 sm:h-10 sm:w-10">
+                    <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
+                  </Button>
+                </div>
               </div>
             </header>
 
             {/* Main Content */}
             <main className="flex-1 overflow-auto">
-              <div className="container mx-auto p-6">
+              <div className="container mx-auto p-3 sm:p-4 md:p-6">
                 <Routes>
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/applications" element={<Applications />} />
