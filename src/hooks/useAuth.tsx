@@ -1,6 +1,5 @@
-import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
-import { User as SupabaseUser, Session } from '@supabase/supabase-js';
-import { supabase } from "@/integrations/supabase/client";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface Profile {
   id: string;
@@ -13,19 +12,17 @@ interface Profile {
 }
 
 interface User extends Profile {
-  supabaseUser: SupabaseUser;
+  id: string;
+  email: string;
 }
-
-import { AuthError } from '@supabase/supabase-js';
 
 interface AuthContextType {
   user: User | null;
-  session: Session | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
   signInWithLinkedIn: () => Promise<void>;
-  signInWithEmail: (email: string, password: string) => Promise<{ error: AuthError | null }>;
-  signUpWithEmail: (email: string, password: string) => Promise<{ error: AuthError | null }>;
+  signInWithEmail: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signUpWithEmail: (email: string, password: string) => Promise<{ error: Error | null }>;
   logout: () => Promise<void>;
   connectLinkedIn: () => Promise<void>;
   incrementApplications: () => Promise<void>;
@@ -35,148 +32,81 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const fetchUserProfile = useCallback(async (userId: string, session: Session) => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .maybeSingle();
-
-      if (error) throw error;
-
-      if (data) {
-        setUser({
-          id: data.id,
-          name: data.name || '',
-          email: data.email || '',
-          avatar: data.avatar || '',
-          linkedin_connected: data.linkedin_connected || false,
-          applications_used: data.applications_used || 0,
-          is_subscribed: data.is_subscribed || false,
-          supabaseUser: session.user,
-        });
-      }
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    // Check for existing mock session in localStorage
+    const storedUser = localStorage.getItem('mockUser');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
     }
   }, []);
 
-  useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        if (session?.user) {
-          fetchUserProfile(session.user.id, session);
-        } else {
-          setUser(null);
-        }
-      }
-    );
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        fetchUserProfile(session.user.id, session);
-      } else {
-        setLoading(false);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [fetchUserProfile]);
-
   const signInWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin,
-      },
-    });
-    if (error) throw error;
+    console.log('Mock Google sign-in - Backend not connected');
   };
 
   const signInWithLinkedIn = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'linkedin_oidc',
-      options: {
-        redirectTo: window.location.origin,
-      },
-    });
-    if (error) throw error;
+    console.log('Mock LinkedIn sign-in - Backend not connected');
   };
 
   const signInWithEmail = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    return { error };
+    // Mock authentication
+    const mockUser: User = {
+      id: 'mock-user-' + Date.now(),
+      email: email,
+      name: email.split('@')[0],
+      avatar: '',
+      linkedin_connected: false,
+      applications_used: 0,
+      is_subscribed: false,
+    };
+    setUser(mockUser);
+    localStorage.setItem('mockUser', JSON.stringify(mockUser));
+    navigate('/dashboard');
+    return { error: null };
   };
 
   const signUpWithEmail = async (email: string, password: string) => {
-    const redirectUrl = `${window.location.origin}/dashboard`;
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-      },
-    });
-    return { error };
+    // Mock sign up
+    return signInWithEmail(email, password);
   };
 
   const logout = async () => {
-    await supabase.auth.signOut();
     setUser(null);
-    setSession(null);
+    localStorage.removeItem('mockUser');
+    navigate('/');
   };
 
   const connectLinkedIn = async () => {
     if (!user) return;
-    
-    const { error } = await supabase
-      .from('profiles')
-      .update({ linkedin_connected: true })
-      .eq('id', user.id);
-
-    if (!error) {
-      setUser({ ...user, linkedin_connected: true });
-    }
+    const updatedUser = { ...user, linkedin_connected: true };
+    setUser(updatedUser);
+    localStorage.setItem('mockUser', JSON.stringify(updatedUser));
   };
 
   const incrementApplications = async () => {
     if (!user) return;
-    
-    const newCount = user.applications_used + 1;
-    const { error } = await supabase
-      .from('profiles')
-      .update({ applications_used: newCount })
-      .eq('id', user.id);
-
-    if (!error) {
-      setUser({ ...user, applications_used: newCount });
-    }
+    const updatedUser = { ...user, applications_used: (user.applications_used || 0) + 1 };
+    setUser(updatedUser);
+    localStorage.setItem('mockUser', JSON.stringify(updatedUser));
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      session, 
-      loading, 
-      signInWithGoogle, 
-      signInWithLinkedIn, 
-      signInWithEmail, 
-      signUpWithEmail, 
-      logout, 
-      connectLinkedIn, 
-      incrementApplications 
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        signInWithGoogle,
+        signInWithLinkedIn,
+        signInWithEmail,
+        signUpWithEmail,
+        logout,
+        connectLinkedIn,
+        incrementApplications,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -185,7 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 }
